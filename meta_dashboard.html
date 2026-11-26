@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>LumicSkin Meta Ads</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root { --bg:#f5f5f5; --card:#ffffff; --text:#222222; --muted:#666666; --faint:#999999; --grid:#eeeeee;
+           --axis:#cccccc; --series:#2a78d6; --track:#e6e6e6; --head:#111111; --headtext:#ffffff;
+           --tooltip:#111111; --row:#eeeeee; }
+  @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+           --bg:#141414; --card:#1f1f1f; --text:#eeeeee; --muted:#aaaaaa; --faint:#888888; --grid:#2e2e2e;
+           --axis:#444444; --series:#5b9bea; --track:#333333; --head:#000000; --tooltip:#000000; --row:#2e2e2e; } }
+  :root[data-theme="dark"] { --bg:#141414; --card:#1f1f1f; --text:#eeeeee; --muted:#aaaaaa; --faint:#888888;
+           --grid:#2e2e2e; --axis:#444444; --series:#5b9bea; --track:#333333; --head:#000000; --tooltip:#000000;
+           --row:#2e2e2e; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin:0; background:var(--bg); color:var(--text); }
+  .header { background:var(--head); color:var(--headtext); padding:32px 40px; }
+  .header h1 { margin:0; font-size:24px; }
+  .header p { margin:6px 0 0; opacity:.7; font-size:14px; }
+  .header a { color:inherit; }
+  .content { padding:32px 40px; max-width:1100px; }
+  h2 { font-size:18px; border-bottom:2px solid var(--text); padding-bottom:8px; margin-top:40px; }
+  .grid { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:16px; }
+  .card { background:var(--card); border-radius:8px; padding:16px 20px; box-shadow:0 1px 4px rgba(0,0,0,.08); min-width:0; }
+  .card h3 { margin:0; font-size:15px; }
+  .hint { font-size:12px; color:var(--faint); margin:2px 0 12px; }
+  .chart { position:relative; height:240px; }
+  .gauge { display:flex; flex-direction:column; align-items:center; }
+  .gauge svg { width:100%; max-width:260px; }
+  .big { font-size:44px; font-weight:700; font-variant-numeric:tabular-nums; line-height:1.1; }
+  .sub { font-size:14px; color:var(--muted); margin-top:4px; }
+  .counter { display:flex; flex-direction:column; justify-content:center; align-items:center; min-height:180px; text-align:center; }
+  .empty { color:var(--faint); font-size:13px; }
+  table { width:100%; border-collapse:collapse; background:var(--card); border-radius:8px; overflow:hidden; box-shadow:0 1px 4px rgba(0,0,0,.08); }
+  th { background:var(--head); color:var(--headtext); padding:12px 16px; text-align:left; font-size:13px; white-space:nowrap; }
+  td { padding:11px 16px; border-bottom:1px solid var(--row); font-size:14px; }
+  th.num, td.num { text-align:right; font-variant-numeric:tabular-nums; white-space:nowrap; }
+  tr:last-child td { border-bottom:none; }
+  .scroll { overflow-x:auto; }
+  @media (max-width:700px) {
+    .header, .content { padding-left:16px; padding-right:16px; }
+    .grid { grid-template-columns:minmax(0,1fr); }
+    .big { font-size:36px; }
+  }
+</style>
+</head>
+<body>
+<div class="header">
+  <h1>LumicSkin — Meta Ads · Black Friday</h1>
+  <p>Bijgewerkt op 26-11-2026 22:06 · Periode: 24-11 t/m 26-11-2026 (vandaag nog niet compleet) · Bron: <a href="https://docs.google.com/spreadsheets/d/1I0q-H04FupPo9R6X-HB-HVqXp6SKveEGlicn9qkvGgA">Google Sheet</a></p>
+</div>
+<div class="content">
+
+  <h2>Kerncijfers</h2>
+  <div class="grid">
+    <div class="card gauge">
+      <h3>Totaal spend</h3><p class="hint">Uitgegeven t.o.v. het geplande dagbudget over de periode</p>
+      <svg viewBox="0 0 200 112" role="img" aria-label="€ 76,55 van € 75,00 gepland budget">
+        <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="var(--track)" stroke-width="16" stroke-linecap="round"/>
+        <path d="M 20 100 A 80 80 0 0 1 180.00 100.00" fill="none" stroke="var(--series)" stroke-width="16" stroke-linecap="round"/>
+      </svg>
+      <div class="big" style="margin-top:-28px">€ 76,55</div>
+      <div class="sub">102% van € 75,00 gepland</div>
+    </div>
+    <div class="card counter">
+      <h3>Aankopen</h3>
+      <div class="big" style="margin-top:12px">0</div>
+      <div class="sub">Nog geen aankopen gemeten</div>
+      <div class="sub">54 clicks · 4.154 impressies</div>
+    </div>
+  </div>
+
+  <h2>Trend en adsets</h2>
+  <div class="grid">
+    <div class="card"><h3>Spend per dag</h3><p class="hint">Hele campagne</p>
+      <div class="chart"><canvas id="c-spend"></canvas></div></div>
+    <div class="card"><h3>CTR per adset</h3><p class="hint">Clicks ÷ impressies over de hele periode, hoogste bovenaan</p>
+      <div class="chart" style="height:208px"><canvas id="c-ctr"></canvas></div></div>
+  </div>
+
+  <h2>Per week</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Week</th><th class="num">Spend</th><th class="num">Clicks</th><th class="num">Aankopen</th><th class="num">ROAS</th></tr></thead>
+    <tbody>
+        <tr><td>2026-W48 (23-11 t/m 29-11)</td><td class="num">€ 76,55</td>
+        <td class="num">54</td><td class="num">0</td>
+        <td class="num">0,00×</td></tr></tbody>
+  </table></div>
+
+  <h2>Per dag</h2>
+  <div class="scroll"><table>
+    <thead><tr><th>Datum</th><th class="num">Spend</th><th class="num">Impressies</th><th class="num">Bereik</th>
+      <th class="num">Clicks</th><th class="num">CTR</th><th class="num">CPM</th><th class="num">Aankopen</th></tr></thead>
+    <tbody>
+        <tr><td>26-11-2026</td><td class="num">€ 32,55</td>
+        <td class="num">1.371</td><td class="num">996</td><td class="num">23</td>
+        <td class="num">1,68%</td><td class="num">€ 23,74</td>
+        <td class="num">0</td></tr>
+        <tr><td>25-11-2026</td><td class="num">€ 22,70</td>
+        <td class="num">1.294</td><td class="num">967</td><td class="num">16</td>
+        <td class="num">1,24%</td><td class="num">€ 17,54</td>
+        <td class="num">0</td></tr>
+        <tr><td>24-11-2026</td><td class="num">€ 21,30</td>
+        <td class="num">1.489</td><td class="num">1.232</td><td class="num">15</td>
+        <td class="num">1,01%</td><td class="num">€ 14,30</td>
+        <td class="num">0</td></tr></tbody>
+  </table></div>
+
+</div>
+<script type="application/json" id="chart-data">{"daily": [{"date": "2026-11-24", "spend": 21.3}, {"date": "2026-11-25", "spend": 22.7}, {"date": "2026-11-26", "spend": 32.55}], "adsets": [{"name": "Lookalike", "full": "2. Lookalike — Vergelijkbaar publiek 1-3%", "spend": 29.4, "clicks": 34, "impressions": 2101.8768803164276, "ctr": 1.62}, {"name": "Interesse", "full": "3. Interesse — Skincare & Natural Beauty NL", "spend": 22.33, "clicks": 10, "impressions": 997.7806349431322, "ctr": 1.0}, {"name": "Remarketing", "full": "1. Remarketing — Website bezoekers 30 dagen", "spend": 24.82, "clicks": 10, "impressions": 1049.9153503637401, "ctr": 0.95}]}</script>
+<script>
+const data = JSON.parse(document.getElementById("chart-data").textContent);
+const css = getComputedStyle(document.documentElement);
+const tok = n => css.getPropertyValue(n).trim();
+const nl = (v, d = 0) => v.toLocaleString("nl-NL", { minimumFractionDigits: d, maximumFractionDigits: d });
+const eur = v => "€ " + nl(v, 2);
+const day = d => new Date(d + "T00:00").toLocaleDateString("nl-NL", { day: "numeric", month: "short" });
+
+Chart.defaults.font.family = "-apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+Chart.defaults.color = tok("--muted");
+Chart.defaults.plugins.legend.display = false;
+Chart.defaults.plugins.tooltip.backgroundColor = tok("--tooltip");
+Chart.defaults.plugins.tooltip.padding = 10;
+Chart.defaults.plugins.tooltip.displayColors = false;
+const valueAxis = fmt => ({ beginAtZero: true, border: { display: false }, grid: { color: tok("--grid") },
+                            ticks: { callback: v => fmt(v), maxTicksLimit: 5 } });
+const catAxis = { grid: { display: false }, border: { color: tok("--axis") } };
+const series = tok("--series");
+
+if (data.daily.length) new Chart(document.getElementById("c-spend"), {
+  type: "line",
+  data: { labels: data.daily.map(d => day(d.date)),
+          datasets: [{ data: data.daily.map(d => d.spend), borderColor: series, backgroundColor: series,
+                       borderWidth: 2, pointRadius: 4, pointHoverRadius: 6, tension: 0,
+                       pointBorderColor: tok("--card"), pointBorderWidth: 2 }] },
+  options: { maintainAspectRatio: false, interaction: { mode: "index", intersect: false },
+             plugins: { tooltip: { callbacks: { label: c => eur(c.parsed.y) } } },
+             scales: { x: catAxis, y: valueAxis(eur) } },
+});
+
+if (data.adsets.length) new Chart(document.getElementById("c-ctr"), {
+  type: "bar",
+  data: { labels: data.adsets.map(a => a.name),
+          datasets: [{ data: data.adsets.map(a => a.ctr), backgroundColor: series, maxBarThickness: 24,
+                       borderRadius: 4, borderSkipped: "start" }] },
+  options: { indexAxis: "y", maintainAspectRatio: false,
+             plugins: { tooltip: { callbacks: { title: i => data.adsets[i[0].dataIndex].full, label: c => {
+               const a = data.adsets[c.dataIndex];
+               return [nl(a.ctr, 2) + "% CTR", nl(a.clicks) + " clicks", eur(a.spend) + " spend"];
+             } } } },
+             scales: { x: valueAxis(v => nl(v, 1) + "%"), y: catAxis } },
+});
+</script>
+</body>
+</html>
